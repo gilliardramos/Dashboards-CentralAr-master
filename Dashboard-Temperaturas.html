@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <title>Dashboard Temperaturas</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link href="css/slate.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- Fontes -->
+    <link href="https://fonts.googleapis.com/css?family=Lobster|Roboto:300,400,700&amp;subset=latin-ext" rel="stylesheet">
+    <script src="https://use.fontawesome.com/7fb9a6c680.js"></script>
+
+    <style>
+        * {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.04em;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        .title {
+            font-family: 'Lobster', cursive;
+        }
+
+        h1 {
+            font-size: 4em;
+        }
+
+        h2 {
+            font-size: 3em;
+        }
+
+        h3 {
+            font-size: 2em;
+        }
+
+        table {
+            font-size: 1.5em;
+        }
+
+        hr {
+            border-top: 1px solid rgba(255, 255, 255, 0.8)
+        }
+
+        .FAcaret {
+            font-family: 'FontAwesome', 'Roboto', sans-serif;
+        }
+
+        .text-big {
+            font-size: 2.8em;
+        }
+
+        .text-bigger {
+            font-size: 4em;
+        }
+
+        .text-side {
+            font-size: 2.2em;
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+        }
+
+        .bold {
+            font-weight: 700;
+        }
+
+        .good {
+            color: rgba(144, 255, 161, 0.8);
+        }
+
+        .bad {
+            color: rgba(255, 148, 148, 0.8);
+        }
+
+        .previous {
+            color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+
+</head>
+
+<body style="background-image: url(img/logoIntelligenceUXMiniBranco.png);
+    background-repeat: no-repeat;
+    background-position: 97% 3%;
+    background-size: 4%;">
+
+    <div class="container text-center" id="containerHead">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-info" id="titleLabel">Dashboard de Temperaturas</h1>
+                <h3>Última atualização:
+                    <span class="title text-info" id="updateDate" style="font-size: 1.2em">Ainda não</span>
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <br>
+
+    <div class="container-fluid text-left">
+        <div class="row">
+            <div class="col-xs-11 col-md-offset-1">
+                <div class="col-md-5">
+                    <h2 class="text-info">Cidades</h2>
+                </div>
+                <div class="col-md-2">
+                    <h2 class="text-info">Hoje</h2>
+                </div>
+                <div class="col-md-2">
+                    <h2 class="text-info">Amanhã</h2>
+                </div>
+                <div class="col-md-3">
+                    <h2 class="text-info">Prox. Semana</h2>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-xs-1">
+                <span class="text-side bold">Maiores Mínimas</span>
+            </div>
+
+            <div class="col-xs-11">
+                <div class="row">
+                    <div class="col-md-5 col-sm-6 text-bigger bold" id="row0city">
+                    </div>
+                    <div class="col-md-2 col-sm-6 text-big bold" id="row0temp1">
+                    </div>
+                    <div class="col-md-2 col-sm-6 text-big bold" id="row0temp2">
+                    </div>
+                    <div class="col-md-3 col-sm-6 text-big bold" id="row0temp3">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5 col-sm-6 text-bigger bold" id="row1city">
+                    </div>
+                    <div class="col-md-2 col-sm-6 text-big bold" id="row1temp1">
+                    </div>
+                    <div class="col-md-2 col-sm-6 text-big bold" id="row1temp2">
+                    </div>
+                    <div class="col-md-3 col-sm-6 text-big bold" id="row1temp3">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5 col-sm-6 text-bigger bold" id="row2city">
+                    </div>
+                    <div class="col-md-2 col-sm-6 text-big bold" id="row2temp1">
+                    </div>
+                    <div class="col-md-2 col-sm-6 text-big bold" id="row2temp2">
+                    </div>
+                    <div class="col-md-3 col-sm-6 text-big bold" id="row2temp3">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-xs-1">
+                <span class="text-side bold">Menores Mínimas</span>
+            </div>
+
+            <div class="col-xs-11">
+                <div class="row">
+                    <div class="col-md-5 col-sm-6 text-bigger bold" id="row3city">
+                    </div>
+                    <div class="col-md-2 col-sm-6 text-big bold" id="row3temp1">
+                    </div>
+                    <div class="col-md-2 col-sm-6 text-big bold" id="row3temp2">
+                    </div>
+                    <div class="col-md-3 col-sm-6 text-big bold" id="row3temp3">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5 col-sm-6 text-bigger bold" id="row4city">
+                    </div>
+                    <div class="col-md-2 col-sm-6 text-big bold" id="row4temp1">
+                    </div>
+                    <div class="col-md-2 col-sm-6 text-big bold" id="row4temp2">
+                    </div>
+                    <div class="col-md-3 col-sm-6 text-big bold" id="row4temp3">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5 col-sm-6 text-bigger bold" id="row5city">
+                    </div>
+                    <div class="col-md-2 col-sm-6 text-big bold" id="row5temp1">
+                    </div>
+                    <div class="col-md-2 col-sm-6 text-big bold" id="row5temp2">
+                    </div>
+                    <div class="col-md-3 col-sm-6 text-big bold" id="row5temp3">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <hr>
+        <div class="row">
+            <div class="col-md-12 text-right">
+                <a href="https://www.apixu.com" style="margin-right: 10px;" target="_blank">Dados de temperatura por Apixu </a>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script src="js/Dashboard-Temperaturas.js"></script>
+
+</html>

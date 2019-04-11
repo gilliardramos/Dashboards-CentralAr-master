@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <title>Dashboard Reclame Aqui</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link href="css/slate.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- Fontes -->
+    <link href="https://fonts.googleapis.com/css?family=Lobster|Roboto:300,400,700&amp;subset=latin-ext" rel="stylesheet">
+    <script src="https://use.fontawesome.com/7fb9a6c680.js"></script>
+    <script src="js/lib/Chart.min.js"></script>
+
+    <style>
+        * {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.04em;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        .title {
+            font-family: 'Lobster', cursive;
+        }
+
+        h1 {
+            font-size: 4em;
+        }
+
+        h2 {
+            font-size: 3em;
+        }
+
+        h3 {
+            font-size: 2em;
+        }
+
+        h4 {
+            font-size: 1.5em;
+        }
+
+        table {
+            font-size: 1.5em;
+        }
+
+        hr {
+            border-top: 3px solid rgba(255, 255, 255, 0.8)
+        }
+
+        .text-big {
+            font-size: 1.8em;
+        }
+
+        .text-bigger {
+            font-size: 2em;
+        }
+
+        .text-side {
+            font-size: 2.2em;
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+        }
+
+        .bold {
+            font-weight: 700;
+        }
+
+        .notBold {
+            font-weight: 400;
+        }
+
+        .value {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .text-danger,
+        .text-danger:hover {
+            color: #ee5f5b !important;
+        }
+
+        .value.graph {
+            top: 50%;
+            width: 100%;
+            position: absolute;
+            text-align: center;
+            left: 0;
+            transform: translate(0%, -20%);
+        }
+
+        .FA {
+            font-family: 'FontAwesome', 'Roboto'
+        }
+
+        .star {
+            font-size: 0.9em;
+        }
+    </style>
+
+</head>
+
+<body style="background-image: url(img/logoIntelligenceUXMiniBranco.png);
+    background-repeat: no-repeat;
+    background-position: 97% 3%;
+    background-size: 4%;">
+
+    <div class="container text-center" id="containerHead">
+        <!-- TITULO -->
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-success" id="titleLabel">Dashboard do Reclame Aqui</h1>
+                <h3>Última atualização:
+                    <span class="title text-success" id="updateDate" style="font-size: 1.2em">Ainda não</span>
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="container-fluid text-center">
+        <div class="row">
+            <!-- 6 MESES -->
+            <div class="col-md-6" style="padding:0 3%;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 class="text-success">6 Meses</h2>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-4 text-big bold">
+                        Reclamações
+                        <div id="m6complaints" class="text-bigger value"></div>
+                    </div>
+                    <div id="m6icon" class="col-md-4 text-big bold">
+                        <img src="">
+                    </div>
+                    <div class="col-md-4 text-big bold">
+                        Avaliação
+                        <div id="m6score" class="text-bigger value"></div>
+                    </div>
+                </div>
+                <div class="row panel" style="margin-top: 80px; padding: 3%">
+                    <div class="col-md-4 text-big bold">
+                        Atendidas
+                        <div class="text-bigger value">
+                            <canvas id="m6replyChart" width="200" height="200">
+                            </canvas>
+                            <span id="m6reply" class="value graph">0%</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-big bold">
+                        Voltaria
+                        <div class="text-bigger value">
+                            <canvas id="m6dealAgainChart" width="200" height="200">
+                            </canvas>
+                            <span id="m6dealAgain" class="value graph">0%</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-big bold">
+                        Solucionadas
+                        <div class="text-bigger value">
+                            <canvas id="m6solvedChart" width="200" height="200">
+                            </canvas>
+                            <span id="m6solved" class="value graph">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 12 MESES -->
+            <div class="col-md-6" style="padding:0 3%;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 class="text-success">12 Meses</h2>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-4 text-big bold">
+                        Reclamações
+                        <div id="m12complaints" class="text-bigger value"></div>
+                    </div>
+                    <div id="m12icon" class="col-md-4 text-big bold">
+                        <img src="">
+                    </div>
+                    <div class="col-md-4 text-big bold">
+                        Avaliação
+                        <div id="m12score" class="text-bigger value"></div>
+                    </div>
+                </div>
+                <div class="row panel" style="margin-top: 80px; padding: 3%">
+                    <div class="col-md-4 text-big bold">
+                        Atendidas
+                        <div class="text-bigger value">
+                            <canvas id="m12replyChart" width="200" height="200">
+                            </canvas>
+                            <span id="m12reply" class="value graph">0%</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-big bold">
+                        Voltaria
+                        <div class="text-bigger value">
+                            <canvas id="m12dealAgainChart" width="200" height="200">
+                            </canvas>
+                            <span id="m12dealAgain" class="value graph">0%</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-big bold">
+                        Solucionadas
+                        <div class="text-bigger value">
+                            <canvas id="m12solvedChart" width="200" height="200">
+                            </canvas>
+                            <span id="m12solved" class="value graph">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="js/Dashboard-ReclameAqui.js"></script>
+
+</html>

@@ -1,0 +1,441 @@
+<!--
+    Criado por: Leo Bottaro
+    Codificação: UTF-8 -- Teste: áçÀ (a acento agudo, ce cedilha, A crase)
+    Finalidade: Medir a performance de projetos gerenciados pelo Trello
+
+    Log de modificações:
+    Data           Quem                 O que
+    08/05/2017     Leo bottaro          Criado o relatório inicial
+ -->
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Meta de Entrega no prazo pelo Trello</title>
+    <!-- Bootstrap -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- Tema do bootstrap, nao vou usar pra manter o padrao, mas ele é bem bonitinho 
+        <link href="https://bootswatch.com/paper/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <style>
+        .row.vertical-divider {
+            overflow: hidden;
+        }
+        
+        .row.vertical-divider>div[class^="col-"] {
+            text-align: center;
+            padding-bottom: 100px;
+            margin-bottom: -100px;
+            border-left: 1px solid #eee;
+        }
+        
+        .row.vertical-divider div[class^="col-"]:first-child {
+            border-left: none;
+        }
+    </style>
+
+</head>
+
+<body style="background-image:url('images/logoIntelligenceUX.png'); background-repeat:no-repeat; background-position-x: 99%; background-position-y: 1%;">
+
+    <!--Cabeçalho-->
+    <div class="container" id="configuracoes">
+        <div class="row text-center">
+            <div class="col-xs-12">
+                <h1>Relatório de progresso do projeto</h1>
+                <br>
+                <br>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-10">
+                <h5>Labels para controle (separe por virgula)</h5>
+                <div class="form">
+                    <div class="col-sm-6 col-md-2">
+                        <label for="boardIdInput ">Board ID: </label>
+                        <input class="form-inline form-control block" type="text" id="boardIdInput" value="I8M3wtRp">
+                    </div>
+                    <div class="col-sm-6 col-md-2">
+                        <label for="sprintLabelInput ">Sprint: </label>
+                        <input class="form-inline form-control block" type="text" id="sprintLabelInput" value="Sprint 1.0">
+                    </div>
+                    <div class="col-sm-6 col-md-2">
+                        <label for="sprintFornecedoresInput"> Fornecedores: </label>
+                        <input class="form-inline form-control block " type="text " id="sprintFornecedoresInput" value="Desenv. Interno,Hugo Estérquile,TaqTile">
+                    </div>
+                    <div class="col-sm-6 col-md-2">
+                        <label for="sprintDispositivosInput"> Dispositivos: </label>
+                        <input class="form-inline form-control block" type="text" id="sprintDispositivosInput" value="Desktop,Mobile">
+                    </div>
+                    <div class="col-sm-6 col-md-2">
+                        <label for="sprintPrioridadesInput"> Prioridades: </label>
+                        <input class="form-inline form-control block" type="text" id="sprintPrioridadesInput" value="Prioridade Alta,Prioridade Média,Prioridade Baixa">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button class="pull-right btn btn-primary" disabled id="searchBtn" onclick="getData()"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Aguardando autorização do Trello...</button>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div id="resultados" hidden>
+        <!--TOTAIS (PSEUDO CABECALHO)-->
+        <div class="container" id="totais">
+            <div class="row text-center">
+                <div class="col-xs-12">
+                    <br>
+                    <h2>Total</h2>
+                    <br>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="progress" style="height:40px;">
+                    <div class="progress-bar" id="progressTotal" role="progressbar" style="width: 0%; padding:11px; min-width:7%; font-size: 2em;">
+                        0%
+                    </div>
+                </div>
+            </div>
+
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <h3>Quantidade de tarefas: <span id="qtdeTotal"></span></h3>
+                </div>
+                <div class="col-md-4">
+                    <h3>Em aberto: <span id="qtdeAberto"></span></h3>
+                </div>
+                <div class="col-md-4">
+                    <h3>Sem prazo: <span id="qtdeSemPrazo"></span></h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- DETALHES -->
+        <hr>
+        <div class="container" id="dados">
+            <div class="row vertical-divider">
+                <!-- FORNECEDORES -->
+                <div class="col-md-4">
+                    <br>
+                    <h2 class="text-center">Fornecedores</h2>
+                    <!-- Chart -->
+                    <div class="col-xs-12">
+                        <div id="fornecedoresShareChart" style="margin: 2px;"></div>
+                    </div>
+
+                    <!-- porcentagems (Dinamico) -->
+                    <div class="col-sm-12" id="porcentagemFornecedores">
+                    </div>
+                </div>
+
+                <!-- DISPOSITIVO -->
+                <div class="col-md-4">
+                    <br>
+                    <h2 class="text-center">Dispositivo</h2>
+                    <!-- Chart -->
+                    <div class="col-xs-12">
+                        <div id="dispositivosShareChart" style="margin: 2px;"></div>
+                    </div>
+
+                    <!-- porcentagems (Dinamico) -->
+                    <div class="col-sm-12" id="porcentagemDispositivos">
+                    </div>
+                </div>
+
+                <!-- PRIORIDADES -->
+                <div class="col-md-4">
+                    <br>
+                    <h2 class="text-center">Prioridades</h2>
+                    <!-- Chart -->
+                    <div class="col-xs-12">
+                        <div id="prioridadesShareChart" style="margin: 2px;"></div>
+                    </div>
+
+                    <!-- porcentagems (Dinamico) -->
+                    <div class="col-sm-12" id="porcentagemPrioridades">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js "></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js "></script>
+    <script src="https://api.trello.com/1/client.js?key=9e11ad1adefd8607a0c2e363e50c59e3 "></script>
+
+    <script>
+        //Trello: Analisa o JSON e pega os valores para a meta de entregas no prazo
+        var searchBtn = document.getElementById('searchBtn');
+        searchBtn.disabled = true;
+
+        //Icons:
+        searchIcon = '<span class="glyphicon glyphicon-search " aria-hidden="true "></span>';
+
+
+        function getData() {
+
+            var doc = {
+                qtdeTotal: document.getElementById('qtdeTotal'),
+                qtdeAberto: document.getElementById('qtdeAberto'),
+                qtdeSemPrazo: document.getElementById('qtdeSemPrazo'),
+                progressTotal: document.getElementById('progressTotal'),
+                porcentagemFornecedores: document.getElementById('porcentagemFornecedores'),
+                porcentagemDispositivos: document.getElementById('porcentagemDispositivos'),
+                porcentagemPrioridades: document.getElementById('porcentagemPrioridades'),
+                resultadosDiv: document.getElementById('resultados')
+            }
+
+            var data = {
+                config: {
+                    boardId: document.getElementById('boardIdInput').value,
+                    sprint: document.getElementById('sprintLabelInput').value.split(','),
+                    fornecedores: document.getElementById('sprintFornecedoresInput').value.split(','),
+                    dispositivos: document.getElementById('sprintDispositivosInput').value.split(','),
+                    prioridades: document.getElementById('sprintPrioridadesInput').value.split(',')
+                },
+                count: {
+                    fornecedores: [],
+                    dispositivos: [],
+                    prioridades: [],
+                    semDataEntrega: 0,
+                    total: 0
+                },
+                countTotal: {
+                    fornecedores: [],
+                    dispositivos: [],
+                    prioridades: [],
+                    total: 0
+                }
+            }
+
+            //altera o searchBtn
+            searchBtn.disabled = true;
+            searchBtn.innerHTML = "Processando";
+
+            // console.log(data);
+
+            Trello.boards.get(data.config.boardId, {
+                    cards: "all",
+                    card_fields: "due,dueComplete,labels",
+
+                    //onSucess:
+                }, function(response) {
+                    var dadosTrello = response;
+                    // console.log(dadosTrello);
+
+
+                    //cria os contadores de acordo com as configurações
+                    //(Na verdade eu só preciso da quantidade de indices correto em cada array)
+                    for (var i = 0; i < data.config.fornecedores.length; i++) {
+                        data.count.fornecedores.push(0);
+                        data.countTotal.fornecedores.push(0);
+                    }
+                    for (var i = 0; i < data.config.dispositivos.length; i++) {
+                        data.count.dispositivos.push(0);
+                        data.countTotal.dispositivos.push(0);
+                    }
+                    for (var i = 0; i < data.config.prioridades.length; i++) {
+                        data.count.prioridades.push(0);
+                        data.countTotal.prioridades.push(0);
+                    }
+
+                    //Percorre os cartoes e vai contando as tarefas para cada parte do relatório
+                    //Para cada cartão
+                    for (var cardI = 0; cardI < dadosTrello.cards.length; cardI++) {
+                        var card = dadosTrello.cards[cardI];
+
+                        //Se é da sprint atual
+                        var shouldContinue = false
+                        for (var j = 0; j < card.labels.length; j++) {
+                            var label = card.labels[j].name;
+                            if (data.config.sprint.indexOf(label) >= 0) {
+                                shouldContinue = true;
+                                break
+                            }
+                        }
+                        if (shouldContinue) {
+                            //Se tem data de entrega configurada
+                            if (card.due != null) {
+                                //Soma no totalzao
+                                data.countTotal.total++;
+                                if (card.dueComplete == true)
+                                    data.count.total++;
+
+                                //Para cada Label do cartão
+                                for (var j = 0; j < card.labels.length; j++) {
+                                    var label = card.labels[j].name;
+                                    //adiciona os dados de cada parte
+                                    //Fornecedores
+                                    index = data.config.fornecedores.indexOf(label);
+                                    if (index >= 0) {
+                                        data.countTotal.fornecedores[index]++;
+                                        if (card.dueComplete == true)
+                                            data.count.fornecedores[index]++
+                                    }
+                                    //Dispositivos
+                                    index = data.config.dispositivos.indexOf(label);
+                                    if (index >= 0) {
+                                        data.countTotal.dispositivos[index]++;
+                                        if (card.dueComplete == true)
+                                            data.count.dispositivos[index]++;
+                                    }
+                                    //Prioridades
+                                    index = data.config.prioridades.indexOf(label);
+                                    if (index >= 0) {
+                                        data.countTotal.prioridades[index]++;
+                                        if (card.dueComplete == true)
+                                            data.count.prioridades[index]++;
+                                    }
+                                }
+                            } else {
+                                //Sem data de entrega
+                                data.count.semDataEntrega++;
+                            }
+                        }
+                    }
+
+
+                    for (var i = 0; i < data.count.fornecedores.length; i++) {
+                        doc.porcentagemFornecedores.innerHTML += returnProgressHTML(data.config.fornecedores[i], Math.ceil(data.count.fornecedores[i] / data.countTotal.fornecedores[i] * 100));
+                    }
+
+                    for (var i = 0; i < data.count.dispositivos.length; i++) {
+                        doc.porcentagemDispositivos.innerHTML += returnProgressHTML(data.config.dispositivos[i], Math.ceil(data.count.dispositivos[i] / data.countTotal.dispositivos[i] * 100));
+                    }
+
+                    for (var i = 0; i < data.count.prioridades.length; i++) {
+                        doc.porcentagemPrioridades.innerHTML += returnProgressHTML(data.config.prioridades[i], Math.ceil(data.count.prioridades[i] / data.countTotal.prioridades[i] * 100));
+                    }
+
+                    doc.qtdeTotal.innerHTML = data.countTotal.total;
+                    doc.qtdeAberto.innerHTML = data.countTotal.total - data.count.total;
+                    doc.qtdeSemPrazo.innerHTML = data.count.semDataEntrega + "<br><h6>(Não consideradas no relatório)</h6>";
+                    doc.progressTotal.innerHTML = Math.round(data.count.total / data.countTotal.total * 100) + "%";
+                    doc.progressTotal.style = 'padding:11px; min-width:7%; font-size: 2em; width: ' + doc.progressTotal.innerHTML;
+
+                    drawChart(data)
+
+                    doc.resultadosDiv.hidden = false;
+                    searchBtn.innerHTML = "OK!";
+
+                    console.log(data);
+
+
+                    //onError:
+                },
+                function(erroResposta) {
+                    console.error(erroResposta);
+                    searchBtn.addClass('btn-warning')
+                    searchBtn.innerHTML = "ERRO! Verifique o Log!";
+                });
+
+        };
+
+        function returnProgressHTML(label, percentage) {
+            return '<div class="col-sm-4" style="font-size: 0.9em; text-align:right; padding:0px;">' + label + '</div><div class="col-sm-8"><div class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="' + percentage + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + percentage + '%;">' + percentage + '%</div></div></div>'
+        }
+
+
+        //---------------------------------------------------
+        //-------------------- TRELLO API -------------------        
+        //---------------------------------------------------
+        //Trello Conectors:
+        Trello.authorize({
+            type: 'popup',
+            name: 'CentralAr - Meta de Prazo',
+            expiration: 'never',
+            success: function() {
+                searchBtn.disabled = false;
+                searchBtn.innerHTML = searchIcon + ' Buscar no Trello';
+            }
+        });
+
+
+        //---------------------------------------------------
+        //------------------ GOOGLE CHARTS ------------------        
+        //---------------------------------------------------
+        // Load the Visualization API and the corechart package.
+        google.charts.load('current', {
+            'packages': ['corechart']
+        });
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        //google.charts.setOnLoadCallback(drawChart);
+
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        function drawChart(data) {
+            // Set chart options
+            var options = {
+                'width': '100%',
+                'height': '100%'
+            };
+
+            // Create the data table.
+            var chartData = new google.visualization.DataTable();
+            chartData.addColumn('string', '');
+            chartData.addColumn('number', '');
+
+            var arrayAux = []
+            for (var i = 0; i < data.countTotal.fornecedores.length; i++) {
+                arrayAux.push([data.config.fornecedores[i], data.countTotal.fornecedores[i]])
+            }
+            chartData.addRows(arrayAux);
+
+            // Instantiate and draw our chart, passing in some options.
+            var chartFornecedores = new google.visualization.PieChart(document.getElementById('fornecedoresShareChart'));
+            chartFornecedores.draw(chartData, options);
+
+
+            // Create the data table.
+            var chartData = new google.visualization.DataTable();
+            chartData.addColumn('string', '');
+            chartData.addColumn('number', '');
+
+            var arrayAux = []
+            for (var i = 0; i < data.countTotal.dispositivos.length; i++) {
+                arrayAux.push([data.config.dispositivos[i], data.countTotal.dispositivos[i]])
+            }
+            chartData.addRows(arrayAux);
+
+            var chartDispositivos = new google.visualization.PieChart(document.getElementById('dispositivosShareChart'));
+            chartDispositivos.draw(chartData, options);
+
+
+            // Create the data table.
+            var chartData = new google.visualization.DataTable();
+            chartData.addColumn('string', '');
+            chartData.addColumn('number', '');
+
+            var arrayAux = []
+            for (var i = 0; i < data.countTotal.prioridades.length; i++) {
+                arrayAux.push([data.config.prioridades[i], data.countTotal.prioridades[i]])
+            }
+            chartData.addRows(arrayAux);
+
+            var chartPrioridades = new google.visualization.PieChart(document.getElementById('prioridadesShareChart'));
+            chartPrioridades.draw(chartData, options);
+        }
+    </script>
+
+</body>
+
+</html>
